@@ -1,6 +1,6 @@
 # 唐津砕石 Conveyor Monitoring System
 
-Real-time monitoring dashboard for the 唐津砕石 crusher conveyor belt (B1), displaying live throughput, current-based throughput prediction, and trend charts. Data is sourced from a PLC via the RT API provided by the IT team.
+Real-time monitoring dashboard for the 唐津砕石 crusher conveyor belt (B1), displaying live throughput, current-based throughput prediction, and trend charts.
 
 ---
 
