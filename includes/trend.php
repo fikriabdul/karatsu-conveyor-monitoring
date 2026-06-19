@@ -5,9 +5,8 @@
  * cadence) so the chart can render gaps (null values) for periods with no
  * logged data — before data starts, after it stops, or any outage in between.
  * range: '1h' | '6h' | '1d' | 'today'
- *   1h/6h → last N hours from now
- *   1d    → from 00:00 today to now
- *   today → from first logged entry today to now
+ *   1h/6h/1d → last N hours rolling from now
+ *   today    → from first logged entry today to now
  *
  * Returns ['points' => [...], 'avg_error' => float|null], where avg_error is
  * the mean absolute error (|actual - predicted|) over points with data.
@@ -16,10 +15,7 @@ function getTrendFromLogs(string $range): array {
     $now_ts = time();
     $step   = 5 * 60;
 
-    if ($range === '1d') {
-        $from_ts = mktime(0, 0, 0, (int)date('n'), (int)date('j'), (int)date('Y'));
-        $dates   = [date('Ymd')];
-    } elseif ($range === 'today') {
+    if ($range === 'today') {
         $dates     = [date('Ymd')];
         $file      = "logs/belt_log_{$dates[0]}.csv";
         $today_str = date('Y-m-d');
@@ -36,7 +32,7 @@ function getTrendFromLogs(string $range): array {
             fclose($fh);
         }
     } else {
-        $hours   = match ($range) { '1h' => 1, default => 6 };
+        $hours   = match ($range) { '1h' => 1, '1d' => 24, default => 6 };
         $from_ts = $now_ts - ($hours * 3600);
         $dates   = [date('Ymd'), date('Ymd', $now_ts - 86400)];
     }
