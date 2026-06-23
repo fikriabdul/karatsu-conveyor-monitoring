@@ -71,7 +71,7 @@ function getTrendFromLogs(string $range): array {
         if ($match !== null) {
             $trend[] = [
                 'timestamp' => date('Y-m-d H:i:s', $match),
-                'label'     => date('H:i', $ts),
+                'label'     => date('H:i', $match),
                 'actual'    => $readings[$match]['actual'],
                 'predicted' => $readings[$match]['predicted'],
             ];
