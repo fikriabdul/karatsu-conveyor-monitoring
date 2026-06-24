@@ -35,11 +35,6 @@
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   .datetime { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
-  .time-selector { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .time-btn { font-size: 12px; font-family: var(--font); font-weight: 500; padding: 6px 14px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; border-right: 1px solid var(--border); }
-  .time-btn:last-child { border-right: none; }
-  .time-btn:hover { background: var(--surface-2); }
-  .time-btn.active { background: var(--text-primary); color: #fff; }
   .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
   @media (max-width: 600px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
   .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; position: relative; overflow: hidden; }
@@ -79,12 +74,6 @@
     <div class="topbar-right">
       <div class="live-badge" id="status-badge"><div class="live-dot" id="status-dot"></div><span id="status-text">Live</span></div>
       <div class="datetime" id="datetime">—</div>
-      <div class="time-selector">
-        <button class="time-btn" data-range="1h" onclick="setTime(this,'1h')">1h</button>
-        <button class="time-btn active" data-range="6h" onclick="setTime(this,'6h')">6h</button>
-        <button class="time-btn" data-range="1d" onclick="setTime(this,'1d')">1d</button>
-        <button class="time-btn" data-range="today" onclick="setTime(this,'today')">Today</button>
-      </div>
     </div>
   </div>
 
@@ -134,7 +123,7 @@
 <script>
   const API_URL = 'api.php';
   const REFRESH_INTERVAL = 1 * 60 * 1000; // 1 minute — catches delayed FTP uploads sooner
-  let activeRange = localStorage.getItem('b1_range') || '6h';
+  const activeRange = 'today';
   let chart = null;
 
   // ── Chart ────────────────────────────────────────────────
@@ -309,15 +298,6 @@
     }
   }
 
-  // ── Time selector ────────────────────────────────────────
-  function setTime(btn, range) {
-    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeRange = range;
-    localStorage.setItem('b1_range', range);
-    fetchTrend(activeRange);
-  }
-
   // ── Clock ────────────────────────────────────────────────
   function updateDatetime() {
     const now  = new Date();
@@ -329,11 +309,6 @@
   // ── Init ─────────────────────────────────────────────────
   updateDatetime();
   setInterval(updateDatetime, 1000);
-
-  // Restore active button from saved range
-  document.querySelectorAll('.time-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.range === activeRange);
-  });
 
   initChart();
   fetchLatest();
